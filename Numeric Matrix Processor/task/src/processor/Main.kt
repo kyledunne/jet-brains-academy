@@ -10,6 +10,7 @@ fun main() {
         println("1. Add matrices")
         println("2. Multiply matrix to a constant")
         println("3. Multiply matrices")
+        println("4. Transpose matrix")
         println("0. Exit")
         print("Your choice: > ")
 
@@ -144,6 +145,91 @@ fun main() {
                 }
 
                 println()
+            }
+            4 -> {
+                println("1. Main diagonal")
+                println("2. Side diagonal")
+                println("3. Vertical line")
+                println("4. Horizontal line")
+                print("Your choice: > ")
+                val choice = scanner.nextInt()
+                if (choice in 1..4) {
+                    print("Enter matrix size > ")
+                    val rows = scanner.nextInt()
+                    val columns = scanner.nextInt()
+                    val matrix = Array(rows * columns) { 0.0 }
+                    println("Enter matrix:")
+                    print("> ")
+                    for (i in 0 until rows) {
+                        for (j in 0 until columns) {
+                            matrix[i * columns + j] = scanner.nextDouble()
+                        }
+                    }
+
+                    println("The result is:")
+                    var transposedMatrix = Array(columns * rows) { 0.0 }
+
+                    when (choice) {
+                        1 -> { // main diagonal
+                            for (i in 0 until rows) {
+                                for (j in 0 until columns) {
+                                    transposedMatrix[i * columns + j] = matrix[j * columns + i]
+                                }
+                            }
+                        }
+                        2 -> { // alternate diagonal
+                            // flip horizontally
+                            // flip across main diagonal
+                            // flip horizontally again
+                            for (i in 0 until rows) {
+                                for (j in 0 until columns) {
+                                    transposedMatrix[i * columns + j] = matrix[i * columns + (columns - 1 - j)]
+                                }
+                            }
+                            val newTransposedMatrix = Array(columns * rows) { 0.0 }
+                            for (i in 0 until rows) {
+                                for (j in 0 until columns) {
+                                    newTransposedMatrix[i * columns + j] = transposedMatrix[j * columns + i]
+                                }
+                            }
+
+                            val newestTransposedMatrix = Array(columns * rows) { 0.0 }
+                            for (i in 0 until rows) {
+                                for (j in 0 until columns) {
+                                    newestTransposedMatrix[i * columns + j] = newTransposedMatrix[i * columns + (columns - 1 - j)]
+                                }
+                            }
+                            transposedMatrix = newestTransposedMatrix
+                        }
+                        3 -> {  // vertical
+                            for (i in 0 until rows) {
+                                for (j in 0 until columns) {
+                                    transposedMatrix[i * columns + j] = matrix[i * columns + (columns - 1 - j)]
+                                }
+                            }
+                        }
+                        4 -> { // horizontal
+                            for (i in 0 until rows) {
+                                for (j in 0 until columns) {
+                                    transposedMatrix[i * columns + j] = matrix[(rows - 1 - i) * columns + j]
+                                }
+                            }
+                        }
+                    }
+
+                    for (i in 0 until rows) {
+                        for (j in 0 until columns) {
+                            print(transposedMatrix[i * columns + j])
+                            print(" ")
+                        }
+                        println()
+                    }
+
+                } else {
+                    println("Invalid input. Please select a choice from 1-4 next time.")
+                    println()
+                    continue@outer
+                }
             }
             else -> {
                 println("Invalid input. Please try again.")
