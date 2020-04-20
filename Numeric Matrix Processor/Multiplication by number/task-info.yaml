@@ -125,6 +125,21 @@ files:
         println("Hello World!")
     }
   learner_created: false
+- name: src/processor/stage1.kt
+  visible: true
+  learner_created: true
+- name: src/processor/stage2.kt
+  visible: true
+  learner_created: true
+- name: src/processor/stage3.kt
+  visible: true
+  learner_created: true
+- name: src/processor/stage4.kt
+  visible: true
+  learner_created: true
+- name: src/processor/stage5.kt
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/87/stages/481/implement
-status: Unchecked
-record: -1
+status: Solved
+record: 2

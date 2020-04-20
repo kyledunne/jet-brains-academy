@@ -299,6 +299,90 @@ files:
         println("Hello World!")
     }
   learner_created: false
+- name: src/processor/stage4.kt
+  visible: true
+  text: |+
+    package processor
+
+  learner_created: true
+- name: src/processor/stage5.kt
+  visible: true
+  text: |+
+    package processor
+
+  learner_created: true
+- name: src/processor/stage2.kt
+  visible: true
+  text: |-
+    @file:Suppress("DuplicatedCode")
+
+    package processor
+
+    import java.util.*
+
+    fun main() {
+        val scanner = Scanner(System.`in`)
+        val aRows = scanner.nextInt()
+        val aColumns = scanner.nextInt()
+        val matrixA = Array(aRows * aColumns) { 0 }
+        for (i in 0 until aRows) {
+            for (j in 0 until aColumns) {
+                matrixA[j + aColumns * i] = scanner.nextInt()
+            }
+        }
+        val constant = scanner.nextInt()
+
+        for (i in 0 until aRows) {
+            for (j in 0 until aColumns) {
+                print(matrixA[j + aColumns * i] * constant)
+                print(" ")
+            }
+            println()
+        }
+    }
+  learner_created: true
+- name: src/processor/stage3.kt
+  visible: true
+  text: |+
+    package processor
+
+  learner_created: true
+- name: src/processor/stage1.kt
+  visible: true
+  text: |
+    @file:Suppress("DuplicatedCode")
+
+    package processor
+
+    import java.util.*
+
+    fun main() {
+        val scanner = Scanner(System.`in`)
+        val aRows = scanner.nextInt()
+        val aColumns = scanner.nextInt()
+        val matrixA = Array(aRows * aColumns) { 0 }
+        for (i in 0 until aRows) {
+            for (j in 0 until aColumns) {
+                matrixA[j + aColumns * i] = scanner.nextInt()
+            }
+        }
+        val bRows = scanner.nextInt()
+        val bColumns = scanner.nextInt()
+
+        if (bRows != aRows || bColumns != aColumns) {
+            println("ERROR")
+            return
+        }
+
+        for (i in 0 until bRows) {
+            for (j in 0 until bColumns) {
+                print(matrixA[j + bColumns * i] + scanner.nextInt())
+                print(" ")
+            }
+            println()
+        }
+    }
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/87/stages/482/implement
-status: Unchecked
+status: Solved
 record: -1
