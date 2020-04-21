@@ -3,6 +3,7 @@
 package processor
 
 import java.util.*
+import kotlin.math.max
 
 fun main() {
     val scanner = Scanner(System.`in`)
@@ -12,6 +13,7 @@ fun main() {
         println("3. Multiply matrices")
         println("4. Transpose matrix")
         println("5. Calculate a determinant")
+        println("6. Inverse matrix")
         println("0. Exit")
         print("Your choice: > ")
 
@@ -49,14 +51,7 @@ fun main() {
                 }
 
                 println("The addition result is:")
-                for (i in 0 until aRows) {
-                    for (j in 0 until aColumns) {
-                        print(matrixA[i][j])
-                        print(" ")
-                    }
-                    println()
-                }
-
+                printMatrix(matrixA)
                 println()
             }
             2 -> {
@@ -76,14 +71,7 @@ fun main() {
                 val constant = scanner.nextDouble()
 
                 println("The multiplication result is:")
-                for (i in 0 until aRows) {
-                    for (j in 0 until aColumns) {
-                        print(matrixA[i][j] * constant)
-                        print(" ")
-                    }
-                    println()
-                }
-
+                printMatrix(multiplyMatrixByConstant(matrixA, constant))
                 println()
             }
             3 -> {
@@ -118,6 +106,7 @@ fun main() {
                     }
                 }
 
+                val multiplicationResult = Array(aRows) { Array(bColumns) { 0.0 } }
                 println("The multiplication result is:")
                 for (i in 0 until aRows) {
                     for (j in 0 until bColumns) {
@@ -133,12 +122,11 @@ fun main() {
                         for (k in 0 until bRows) {
                             result += columnInB[k] * rowInA[k]
                         }
-                        print(result)
-                        print(" ")
+                        multiplicationResult[i][j] = result
                     }
-                    println()
                 }
 
+                printMatrix(multiplicationResult)
                 println()
             }
             4 -> {
@@ -170,19 +158,14 @@ fun main() {
 
                     println("The result is:")
                     val transposedMatrix = when (choice) {
-                        1 -> transformOnMainDiagonal(matrix)
-                        2 -> transformOnAlternateDiagonal(matrix)
+                        1 -> transposeOnMainDiagonal(matrix)
+                        2 -> transposeOnAlternateDiagonal(matrix)
                         3 -> flipOverVerticalLine(matrix)
                         else -> flipOverHorizontalLine(matrix)
                     }
 
-                    for (i in 0 until size) {
-                        for (j in 0 until size) {
-                            print(transposedMatrix[i][j])
-                            print(" ")
-                        }
-                        println()
-                    }
+                    print(transposedMatrix)
+                    println()
 
                 } else {
                     println("Invalid input. Please select a choice from 1-4 next time.")
@@ -213,15 +196,42 @@ fun main() {
                 println(determinant(matrix))
                 println()
             }
+            6 -> {
+                print("Enter matrix size > ")
+                val size = scanner.nextInt()
+                val shouldBeSame = scanner.nextInt()
+                if (size != shouldBeSame) {
+                    println("Error: matrix must have an equal number of rows and columns in order to have an inverse.")
+                    println()
+                    continue@outer
+                }
+                val matrix = Array(size) { Array(size) { 0.0 } }
+                println("Enter matrix:")
+                print("> ")
+                for (i in 0 until size) {
+                    for (j in 0 until size) {
+                        matrix[i][j] = scanner.nextDouble()
+                    }
+                }
+                println("The result is:")
+                val determinant = determinant(transposeOnMainDiagonal(matrix))
+                val oneOverDeterminant = 1.0 / determinant
+                println()
+            }
             else -> {
                 println("Invalid input. Please try again.")
             }
         }
     }
-
 }
 
-fun transformOnMainDiagonal(matrix: Array<Array<Double>>): Array<Array<Double>> {
+fun adjoint(matrix: Array<Array<Double>>): Array<Array<Double>> {
+    val size = matrix.size
+    val adjointMatrix = Array(size) { Array(size) { 0.0 } }
+    TODO()
+}
+
+fun transposeOnMainDiagonal(matrix: Array<Array<Double>>): Array<Array<Double>> {
     val size = matrix.size
     val transposedMatrix = Array(size) { Array(size) { 0.0 } }
     for (i in 0 until size) {
@@ -232,8 +242,8 @@ fun transformOnMainDiagonal(matrix: Array<Array<Double>>): Array<Array<Double>> 
     return transposedMatrix
 }
 
-fun transformOnAlternateDiagonal(matrix: Array<Array<Double>>): Array<Array<Double>> {
-    return flipOverVerticalLine(transformOnMainDiagonal(flipOverVerticalLine(matrix)))
+fun transposeOnAlternateDiagonal(matrix: Array<Array<Double>>): Array<Array<Double>> {
+    return flipOverVerticalLine(transposeOnMainDiagonal(flipOverVerticalLine(matrix)))
 }
 
 fun flipOverVerticalLine(matrix: Array<Array<Double>>): Array<Array<Double>> {
@@ -258,7 +268,72 @@ fun flipOverHorizontalLine(matrix: Array<Array<Double>>): Array<Array<Double>> {
     return transposedMatrix
 }
 
+// regular ordered matrix; outer array is an array of rows, each inner array is a row
+fun printMatrix(matrix: Array<Array<Double>>) {
+    if (matrix.isEmpty()) {
+        println("[empty matrix]")
+        return
+    }
+    val rows = matrix.size
+    val columns = matrix[0].size
+    val columnWidths = Array(columns) { 1 }
+    val roundedMatrix = Array(rows) { Array(columns) { "" } }
+    var value: String
+    for (i in 0 until rows) {
+        for (j in 0 until columns) {
+            value = matrix[i][j].toString().roundStringRepresentationOfDecimalTo2DecimalPlaces()
+            columnWidths[j] = max(columnWidths[j], value.length + 1)
+            roundedMatrix[i][j] = value
+        }
+    }
+    var element: String
+    var elementLength: Int
+    for (i in 0 until rows) {
+        for (j in 0 until columns) {
+            element = roundedMatrix[i][j]
+            elementLength = element.length
+            print(element)
+            for (k in elementLength until columnWidths[j]) {
+                print(" ")
+            }
+        }
+        println()
+    }
+}
+
+fun String.roundStringRepresentationOfDecimalTo2DecimalPlaces(): String {
+    var roundedRepresentation = ""
+    var foundDecimal = false
+    var numbersSinceDecimal = 0
+    for (char in this) {
+        roundedRepresentation += char
+        if (foundDecimal) {
+            numbersSinceDecimal++
+            if (numbersSinceDecimal >= 2) {
+                return roundedRepresentation
+            }
+        } else if (char == '.') {
+            foundDecimal = true
+        }
+    }
+    return roundedRepresentation
+}
+
+fun multiplyMatrixByConstant(matrix: Array<Array<Double>>, constant: Double): Array<Array<Double>> {
+    if (matrix.isEmpty()) return matrix
+    val rows = matrix.size
+    val columns = matrix[0].size
+    val resultMatrix = Array(rows) { Array(columns) { 0.0 } }
+    for (i in 0 until rows) {
+        for (j in 0 until columns) {
+            resultMatrix[i][j] = matrix[i][j] * constant
+        }
+    }
+    return resultMatrix
+}
+
 // each inner array should be a column; outer array should be an array of columns
+// usually this means that before the first call to this function the matrix needs to be transposed
 private fun determinant(matrix: Array<Array<Double>>): Double {
     val size = matrix.size
     when (size) {
