@@ -231,15 +231,13 @@ fun adjoint(matrix: Array<Array<Double>>): Array<Array<Double>> {
     val result = Array(size) { Array(size) { 0.0 } }
     val currentCofactorMatrix = Array(size - 1) { Array(size - 1) { 0.0 } }
     var multiplier = 1
-    // for each element:
-    // calculate matrix
     var cofactorRowIndex: Int
     var cofactorColumnIndex: Int
     for (row in 0 until size) {
         for (column in 0 until size) {
             cofactorRowIndex = 0
-            cofactorColumnIndex = 0
             for (i in 0 until row) {
+                cofactorColumnIndex = 0
                 for (j in 0 until column) {
                     currentCofactorMatrix[cofactorRowIndex][cofactorColumnIndex] = matrix[i][j]
                     cofactorColumnIndex++
@@ -253,6 +251,7 @@ fun adjoint(matrix: Array<Array<Double>>): Array<Array<Double>> {
             }
 
             for (i in row + 1 until size) {
+                cofactorColumnIndex = 0
                 for (j in 0 until column) {
                     currentCofactorMatrix[cofactorRowIndex][cofactorColumnIndex] = matrix[i][j]
                     cofactorColumnIndex++
@@ -269,7 +268,7 @@ fun adjoint(matrix: Array<Array<Double>>): Array<Array<Double>> {
             multiplier *= -1
         }
      }
-    return result
+    return transposeOnMainDiagonal(result)
 }
 
 fun transposeOnMainDiagonal(matrix: Array<Array<Double>>): Array<Array<Double>> {
