@@ -1,8 +1,9 @@
-@file:Suppress("DuplicatedCode")
+@file:Suppress("DuplicatedCode", "MoveVariableDeclarationIntoWhen")
 
 package processor
 
 import java.util.*
+import kotlin.system.exitProcess
 
 fun main() {
     val scanner = Scanner(System.`in`)
@@ -244,16 +245,6 @@ fun main() {
                     }
                 }
                 println("The result is:")
-//                var firstPart = 1.0
-//                for (i in 0 until rows) {
-//                    firstPart *= matrix[columns * i + i]
-//                }
-//
-//                var secondPart = 1.0
-//                for (i in 0 until rows) {
-//                    secondPart *= matrix[columns * (columns - 1 - i) + i]
-//                }
-//                println(firstPart - secondPart)
                 println(determinant(matrix))
                 println()
             }
@@ -266,13 +257,50 @@ fun main() {
 }
 
 // each inner array should be a column; outer array should be an array of columns
-fun determinant(matrix: Array<Array<Double>>): Double {
-    when (matrix.size) {
+private fun determinant(matrix: Array<Array<Double>>): Double {
+    val size = matrix.size
+    when (size) {
         0 -> return 0.0
         1 -> return matrix[0][0]
         2 -> return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
-        3 -> {
+        else -> {
 
+            val headers = Array(size) { 0.0 }
+
+            for (i in 0 until size) {
+                headers[i] = matrix[i][0]
+            }
+
+            val footerColumns = Array(size) { Array(size - 1) { 0.0 } }
+            for (column in 0 until size) {
+                for (row in 0 until size - 1) {
+                    footerColumns[column][row] = matrix[column][row + 1]
+                }
+            }
+
+
+            val footers = Array(size) { Array(size - 1) { Array(size - 1) { 0.0 } } }
+
+            for (currentSkippedColumn in 0 until size) {
+                var index = 0
+                for (columnIndex in 0 until currentSkippedColumn) {
+                    footers[currentSkippedColumn][index] = footerColumns[columnIndex]
+                    index++
+                }
+
+                for (columnIndex in currentSkippedColumn + 1 until size) {
+                    footers[currentSkippedColumn][index] = footerColumns[columnIndex]
+                    index++
+                }
+            }
+
+            var multiplier = 1
+            var total = 0.0
+            for (index in 0 until size) {
+                total += multiplier * headers[index] * determinant(footers[index])
+                multiplier *= -1
+            }
+            return total
         }
     }
 }
