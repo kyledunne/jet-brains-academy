@@ -1,9 +1,8 @@
-@file:Suppress("DuplicatedCode", "MoveVariableDeclarationIntoWhen")
+@file:Suppress("DuplicatedCode", "MoveVariableDeclarationIntoWhen", "ReplaceManualRangeWithIndicesCalls")
 
 package processor
 
 import java.util.*
-import kotlin.system.exitProcess
 
 fun main() {
     val scanner = Scanner(System.`in`)
@@ -22,12 +21,12 @@ fun main() {
                 print("Enter size of first matrix: > ")
                 val aRows = scanner.nextInt()
                 val aColumns = scanner.nextInt()
-                val matrixA = Array(aRows * aColumns) { 0.0 }
+                val matrixA = Array(aRows) { Array(aColumns) { 0.0 } }
                 println("Enter first matrix:")
                 for (i in 0 until aRows) {
                     print("> ")
                     for (j in 0 until aColumns) {
-                        matrixA[j + aColumns * i] = scanner.nextDouble()
+                        matrixA[i][j] = scanner.nextDouble()
                     }
                 }
 
@@ -36,7 +35,7 @@ fun main() {
                 val bColumns = scanner.nextInt()
 
                 if (bRows != aRows || bColumns != aColumns) {
-                    println("Error: to add to matrices, they must have identical dimensions.")
+                    println("Error: to add two matrices, they must have identical dimensions.")
                     println()
                     continue@outer
                 }
@@ -45,14 +44,14 @@ fun main() {
                 for (i in 0 until bRows) {
                     print("> ")
                     for (j in 0 until bColumns) {
-                        matrixA[j + bColumns * i] += scanner.nextDouble()
+                        matrixA[i][j] += scanner.nextDouble()
                     }
                 }
 
                 println("The addition result is:")
                 for (i in 0 until aRows) {
                     for (j in 0 until aColumns) {
-                        print(matrixA[j + aColumns * i])
+                        print(matrixA[i][j])
                         print(" ")
                     }
                     println()
@@ -64,12 +63,12 @@ fun main() {
                 print("Enter size of matrix: > ")
                 val aRows = scanner.nextInt()
                 val aColumns = scanner.nextInt()
-                val matrixA = Array(aRows * aColumns) { 0.0 }
+                val matrixA = Array(aRows) { Array(aColumns) { 0.0 } }
                 println("Enter matrix:")
                 for (i in 0 until aRows) {
                     print("> ")
                     for (j in 0 until aColumns) {
-                        matrixA[j + aColumns * i] = scanner.nextDouble()
+                        matrixA[i][j] = scanner.nextDouble()
                     }
                 }
 
@@ -79,7 +78,7 @@ fun main() {
                 println("The multiplication result is:")
                 for (i in 0 until aRows) {
                     for (j in 0 until aColumns) {
-                        print(matrixA[j + aColumns * i] * constant)
+                        print(matrixA[i][j] * constant)
                         print(" ")
                     }
                     println()
@@ -91,12 +90,12 @@ fun main() {
                 print("Enter size of first matrix: > ")
                 val aRows = scanner.nextInt()
                 val aColumns = scanner.nextInt()
-                val matrixA = Array(aRows * aColumns) { 0.0 }
+                val matrixA = Array(aRows) { Array(aColumns) { 0.0 } }
                 println("Enter first matrix:")
                 for (i in 0 until aRows) {
                     print("> ")
                     for (j in 0 until aColumns) {
-                        matrixA[j + aColumns * i] = scanner.nextDouble()
+                        matrixA[i][j] = scanner.nextDouble()
                     }
                 }
 
@@ -110,12 +109,12 @@ fun main() {
                     continue@outer
                 }
 
-                val matrixB = Array(bRows * bColumns) { 0.0 }
+                val matrixB = Array(bRows) { Array(bColumns) { 0.0 } }
                 println("Enter second matrix:")
                 for (i in 0 until bRows) {
                     print("> ")
                     for (j in 0 until bColumns) {
-                        matrixB[j + bColumns * i] += scanner.nextDouble()
+                        matrixB[i][j] += scanner.nextDouble()
                     }
                 }
 
@@ -125,10 +124,10 @@ fun main() {
                         val rowInA = Array(aColumns) { 0.0 }
                         val columnInB = Array(bRows) { 0.0 }
                         for (k in 0 until aColumns) {
-                            rowInA[k] = matrixA[k + i * aColumns]
+                            rowInA[k] = matrixA[i][k]
                         }
                         for (k in 0 until bRows) {
-                            columnInB[k] = matrixB[k * bColumns + j]
+                            columnInB[k] = matrixB[k][j]
                         }
                         var result = 0.0
                         for (k in 0 until bRows) {
@@ -151,71 +150,35 @@ fun main() {
                 val choice = scanner.nextInt()
                 if (choice in 1..4) {
                     print("Enter matrix size > ")
-                    val rows = scanner.nextInt()
-                    val columns = scanner.nextInt()
-                    val matrix = Array(rows * columns) { 0.0 }
+                    val size = scanner.nextInt()
+                    val shouldBeSame = scanner.nextInt()
+
+                    if (size != shouldBeSame) {
+                        println("Error: matrix must have an equal number of rows and columns in order to have a determinant.")
+                        println()
+                        continue@outer
+                    }
+
+                    val matrix = Array(size) { Array(size) { 0.0 } }
                     println("Enter matrix:")
                     print("> ")
-                    for (i in 0 until rows) {
-                        for (j in 0 until columns) {
-                            matrix[i * columns + j] = scanner.nextDouble()
+                    for (i in 0 until size) {
+                        for (j in 0 until size) {
+                            matrix[i][j] = scanner.nextDouble()
                         }
                     }
 
                     println("The result is:")
-                    var transposedMatrix = Array(columns * rows) { 0.0 }
-
-                    when (choice) {
-                        1 -> { // main diagonal
-                            for (i in 0 until rows) {
-                                for (j in 0 until columns) {
-                                    transposedMatrix[i * columns + j] = matrix[j * columns + i]
-                                }
-                            }
-                        }
-                        2 -> { // alternate diagonal
-                            // flip horizontally
-                            // flip across main diagonal
-                            // flip horizontally again
-                            for (i in 0 until rows) {
-                                for (j in 0 until columns) {
-                                    transposedMatrix[i * columns + j] = matrix[i * columns + (columns - 1 - j)]
-                                }
-                            }
-                            val newTransposedMatrix = Array(columns * rows) { 0.0 }
-                            for (i in 0 until rows) {
-                                for (j in 0 until columns) {
-                                    newTransposedMatrix[i * columns + j] = transposedMatrix[j * columns + i]
-                                }
-                            }
-
-                            val newestTransposedMatrix = Array(columns * rows) { 0.0 }
-                            for (i in 0 until rows) {
-                                for (j in 0 until columns) {
-                                    newestTransposedMatrix[i * columns + j] = newTransposedMatrix[i * columns + (columns - 1 - j)]
-                                }
-                            }
-                            transposedMatrix = newestTransposedMatrix
-                        }
-                        3 -> {  // vertical
-                            for (i in 0 until rows) {
-                                for (j in 0 until columns) {
-                                    transposedMatrix[i * columns + j] = matrix[i * columns + (columns - 1 - j)]
-                                }
-                            }
-                        }
-                        4 -> { // horizontal
-                            for (i in 0 until rows) {
-                                for (j in 0 until columns) {
-                                    transposedMatrix[i * columns + j] = matrix[(rows - 1 - i) * columns + j]
-                                }
-                            }
-                        }
+                    val transposedMatrix = when (choice) {
+                        1 -> transformOnMainDiagonal(matrix)
+                        2 -> transformOnAlternateDiagonal(matrix)
+                        3 -> flipOverVerticalLine(matrix)
+                        else -> flipOverHorizontalLine(matrix)
                     }
 
-                    for (i in 0 until rows) {
-                        for (j in 0 until columns) {
-                            print(transposedMatrix[i * columns + j])
+                    for (i in 0 until size) {
+                        for (j in 0 until size) {
+                            print(transposedMatrix[i][j])
                             print(" ")
                         }
                         println()
@@ -241,6 +204,8 @@ fun main() {
                 print("> ")
                 for (i in 0 until size) {
                     for (j in 0 until size) {
+                        // read the matrix in transposed, as it has to be transposed before being passed to
+                        // the determinant function
                         matrix[j][i] = scanner.nextDouble()
                     }
                 }
@@ -254,6 +219,43 @@ fun main() {
         }
     }
 
+}
+
+fun transformOnMainDiagonal(matrix: Array<Array<Double>>): Array<Array<Double>> {
+    val size = matrix.size
+    val transposedMatrix = Array(size) { Array(size) { 0.0 } }
+    for (i in 0 until size) {
+        for (j in 0 until size) {
+            transposedMatrix[i][j] = matrix[j][i]
+        }
+    }
+    return transposedMatrix
+}
+
+fun transformOnAlternateDiagonal(matrix: Array<Array<Double>>): Array<Array<Double>> {
+    return flipOverVerticalLine(transformOnMainDiagonal(flipOverVerticalLine(matrix)))
+}
+
+fun flipOverVerticalLine(matrix: Array<Array<Double>>): Array<Array<Double>> {
+    val size = matrix.size
+    val transposedMatrix = Array(size) { Array(size) { 0.0 } }
+    for (i in 0 until size) {
+        for (j in 0 until size) {
+            transposedMatrix[i][j] = matrix[i][size - 1 - j]
+        }
+    }
+    return transposedMatrix
+}
+
+fun flipOverHorizontalLine(matrix: Array<Array<Double>>): Array<Array<Double>> {
+    val size = matrix.size
+    val transposedMatrix = Array(size) { Array(size) { 0.0 } }
+    for (i in 0 until size) {
+        for (j in 0 until size) {
+            transposedMatrix[i][j] = matrix[size - 1 - i][j]
+        }
+    }
+    return transposedMatrix
 }
 
 // each inner array should be a column; outer array should be an array of columns
@@ -304,3 +306,5 @@ private fun determinant(matrix: Array<Array<Double>>): Double {
         }
     }
 }
+
+
