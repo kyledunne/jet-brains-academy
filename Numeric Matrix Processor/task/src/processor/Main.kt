@@ -4,6 +4,7 @@ package processor
 
 import java.util.*
 import kotlin.math.max
+import kotlin.math.round
 
 fun main() {
     val scanner = Scanner(System.`in`)
@@ -230,7 +231,7 @@ fun adjoint(matrix: Array<Array<Double>>): Array<Array<Double>> {
     val size = matrix.size
     val result = Array(size) { Array(size) { 0.0 } }
     val currentCofactorMatrix = Array(size - 1) { Array(size - 1) { 0.0 } }
-    var multiplier = 1
+    var multiplier: Int
     var cofactorRowIndex: Int
     var cofactorColumnIndex: Int
     for (row in 0 until size) {
@@ -263,9 +264,12 @@ fun adjoint(matrix: Array<Array<Double>>): Array<Array<Double>> {
                 }
                 cofactorRowIndex++
             }
-
+            multiplier = if (row % 2 == 0) {
+                if (column % 2 == 0) 1 else -1
+            } else {
+                if (column % 2 == 0) -1 else 1
+            }
             result[row][column] = multiplier * determinant(currentCofactorMatrix)
-            multiplier *= -1
         }
      }
     return transposeOnMainDiagonal(result)
@@ -331,7 +335,7 @@ fun printMatrix(matrix: Array<Array<Double>>) {
     var value: String
     for (i in 0 until rows) {
         for (j in 0 until columns) {
-            value = matrix[i][j].toString().roundStringRepresentationOfDecimalTo2DecimalPlaces()
+            value = (round(matrix[i][j] * 100.0) / 100.0).toString()
             columnWidths[j] = max(columnWidths[j], value.length + 1)
             roundedMatrix[i][j] = value
         }
@@ -352,24 +356,6 @@ fun printMatrix(matrix: Array<Array<Double>>) {
         }
         println()
     }
-}
-
-fun String.roundStringRepresentationOfDecimalTo2DecimalPlaces(): String {
-    var roundedRepresentation = ""
-    var foundDecimal = false
-    var numbersSinceDecimal = 0
-    for (char in this) {
-        roundedRepresentation += char
-        if (foundDecimal) {
-            numbersSinceDecimal++
-            if (numbersSinceDecimal >= 2) {
-                return roundedRepresentation
-            }
-        } else if (char == '.') {
-            foundDecimal = true
-        }
-    }
-    return roundedRepresentation
 }
 
 fun multiplyMatrixByConstant(matrix: Array<Array<Double>>, constant: Double): Array<Array<Double>> {
