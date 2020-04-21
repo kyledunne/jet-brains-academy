@@ -216,6 +216,7 @@ fun main() {
                 println("The result is:")
                 val determinant = determinant(transposeOnMainDiagonal(matrix))
                 val oneOverDeterminant = 1.0 / determinant
+                printMatrix(multiplyMatrixByConstant(adjoint(matrix), oneOverDeterminant))
                 println()
             }
             else -> {
@@ -227,8 +228,48 @@ fun main() {
 
 fun adjoint(matrix: Array<Array<Double>>): Array<Array<Double>> {
     val size = matrix.size
-    val adjointMatrix = Array(size) { Array(size) { 0.0 } }
-    TODO()
+    val result = Array(size) { Array(size) { 0.0 } }
+    val currentCofactorMatrix = Array(size - 1) { Array(size - 1) { 0.0 } }
+    var multiplier = 1
+    // for each element:
+    // calculate matrix
+    var cofactorRowIndex: Int
+    var cofactorColumnIndex: Int
+    for (row in 0 until size) {
+        for (column in 0 until size) {
+            cofactorRowIndex = 0
+            cofactorColumnIndex = 0
+            for (i in 0 until row) {
+                for (j in 0 until column) {
+                    currentCofactorMatrix[cofactorRowIndex][cofactorColumnIndex] = matrix[i][j]
+                    cofactorColumnIndex++
+                }
+
+                for (j in column + 1 until size) {
+                    currentCofactorMatrix[cofactorRowIndex][cofactorColumnIndex] = matrix[i][j]
+                    cofactorColumnIndex++
+                }
+                cofactorRowIndex++
+            }
+
+            for (i in row + 1 until size) {
+                for (j in 0 until column) {
+                    currentCofactorMatrix[cofactorRowIndex][cofactorColumnIndex] = matrix[i][j]
+                    cofactorColumnIndex++
+                }
+
+                for (j in column + 1 until size) {
+                    currentCofactorMatrix[cofactorRowIndex][cofactorColumnIndex] = matrix[i][j]
+                    cofactorColumnIndex++
+                }
+                cofactorRowIndex++
+            }
+
+            result[row][column] = multiplier * determinant(currentCofactorMatrix)
+            multiplier *= -1
+        }
+     }
+    return result
 }
 
 fun transposeOnMainDiagonal(matrix: Array<Array<Double>>): Array<Array<Double>> {
