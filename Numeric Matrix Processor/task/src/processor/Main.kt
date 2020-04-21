@@ -51,7 +51,7 @@ fun main() {
                 }
 
                 println("The addition result is:")
-                printMatrix(matrixA)
+                printMatrixUgly(matrixA)
                 println()
             }
             2 -> {
@@ -71,7 +71,7 @@ fun main() {
                 val constant = scanner.nextDouble()
 
                 println("The multiplication result is:")
-                printMatrix(multiplyMatrixByConstant(matrixA, constant))
+                printMatrixUgly(multiplyMatrixByConstant(matrixA, constant))
                 println()
             }
             3 -> {
@@ -126,7 +126,7 @@ fun main() {
                     }
                 }
 
-                printMatrix(multiplicationResult)
+                printMatrixUgly(multiplicationResult)
                 println()
             }
             4 -> {
@@ -164,7 +164,7 @@ fun main() {
                         else -> flipOverHorizontalLine(matrix)
                     }
 
-                    print(transposedMatrix)
+                    printMatrixUgly(transposedMatrix)
                     println()
 
                 } else {
@@ -307,6 +307,16 @@ fun flipOverHorizontalLine(matrix: Array<Array<Double>>): Array<Array<Double>> {
         }
     }
     return transposedMatrix
+}
+
+fun printMatrixUgly(matrix: Array<Array<Double>>) {
+    for (row in matrix) {
+        for (element in row) {
+            print(element)
+            print(" ")
+        }
+        println()
+    }
 }
 
 // regular ordered matrix; outer array is an array of rows, each inner array is a row
