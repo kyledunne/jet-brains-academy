@@ -342,8 +342,11 @@ fun printMatrix(matrix: Array<Array<Double>>) {
         for (j in 0 until columns) {
             element = roundedMatrix[i][j]
             elementLength = element.length
+            for (k in elementLength + 1 until columnWidths[j]) {
+                print(" ")
+            }
             print(element)
-            for (k in elementLength until columnWidths[j]) {
+            if (j != columns - 1) {
                 print(" ")
             }
         }
