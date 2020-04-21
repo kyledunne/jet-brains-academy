@@ -11,6 +11,7 @@ fun main() {
         println("2. Multiply matrix to a constant")
         println("3. Multiply matrices")
         println("4. Transpose matrix")
+        println("5. Calculate a determinant")
         println("0. Exit")
         print("Your choice: > ")
 
@@ -120,12 +121,6 @@ fun main() {
                 println("The multiplication result is:")
                 for (i in 0 until aRows) {
                     for (j in 0 until bColumns) {
-                        // TODO matrix multiplication
-                        // 1st row & 1st column
-                        // for row 1, column 2:
-                        // all of first row in a
-                        // all of second column in b
-                        //
                         val rowInA = Array(aColumns) { 0.0 }
                         val columnInB = Array(bRows) { 0.0 }
                         for (k in 0 until aColumns) {
@@ -231,10 +226,53 @@ fun main() {
                     continue@outer
                 }
             }
+            5 -> {
+                print("Enter matrix size > ")
+                val size = scanner.nextInt()
+                val shouldBeSame = scanner.nextInt()
+                if (size != shouldBeSame) {
+                    println("Error: matrix must have an equal number of rows and columns in order to have a determinant.")
+                    println()
+                    continue@outer
+                }
+                val matrix = Array(size) { Array(size) { 0.0 } }
+                println("Enter matrix:")
+                print("> ")
+                for (i in 0 until size) {
+                    for (j in 0 until size) {
+                        matrix[j][i] = scanner.nextDouble()
+                    }
+                }
+                println("The result is:")
+//                var firstPart = 1.0
+//                for (i in 0 until rows) {
+//                    firstPart *= matrix[columns * i + i]
+//                }
+//
+//                var secondPart = 1.0
+//                for (i in 0 until rows) {
+//                    secondPart *= matrix[columns * (columns - 1 - i) + i]
+//                }
+//                println(firstPart - secondPart)
+                println(determinant(matrix))
+                println()
+            }
             else -> {
                 println("Invalid input. Please try again.")
             }
         }
     }
 
+}
+
+// each inner array should be a column; outer array should be an array of columns
+fun determinant(matrix: Array<Array<Double>>): Double {
+    when (matrix.size) {
+        0 -> return 0.0
+        1 -> return matrix[0][0]
+        2 -> return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+        3 -> {
+
+        }
+    }
 }
